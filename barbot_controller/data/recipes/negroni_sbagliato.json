@@ -1,0 +1,18 @@
+{
+    "id": "negroni_sbagliato",
+    "name": "Negroni Sbagliato",
+    "ingredients": [
+        {
+            "ingredient": "prosecco",
+            "amount": 40
+        },
+        {
+            "ingredient": "campari",
+            "amount": 40
+        },
+        {
+            "ingredient": "vermouth",
+            "amount": 40
+        }
+    ]
+}

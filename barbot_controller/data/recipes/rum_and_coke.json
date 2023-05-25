@@ -1,0 +1,14 @@
+{
+    "id": "rum_and_coke",
+    "name": "Rum and Coke",
+    "ingredients": [
+        {
+            "ingredient": "rum",
+            "amount": 60
+        },
+        {
+            "ingredient": "coke",
+            "amount": 150
+        }
+    ]
+}

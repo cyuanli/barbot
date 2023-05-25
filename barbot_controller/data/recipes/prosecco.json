@@ -1,0 +1,10 @@
+{
+    "id": "prosecco",
+    "name": "Prosecco",
+    "ingredients": [
+        {
+            "ingredient": "prosecco",
+            "amount": 150
+        }
+    ]
+}

@@ -1,0 +1,72 @@
+[
+    {
+        "id": "vodka",
+        "name": "Vodka",
+        "type": "alcoholic"
+    },
+    {
+        "id": "gin",
+        "name": "Gin",
+        "type": "alcoholic"
+    },
+    {
+        "id": "rum",
+        "name": "Rum",
+        "type": "alcoholic"
+    },
+    {
+        "id": "coke",
+        "name": "Coke",
+        "type": "non-alcoholic"
+    },
+    {
+        "id": "tonic",
+        "name": "Tonic",
+        "type": "non-alcoholic"
+    },
+    {
+        "id": "lemon_juice",
+        "name": "Lemon juice",
+        "type": "non-alcoholic"
+    },
+    {
+        "id": "sugar_syrup",
+        "name": "Sugar syrup",
+        "type": "syrup"
+    },
+    {
+        "id": "aperol",
+        "name": "Aperol",
+        "type": "alcoholic"
+    },
+    {
+        "id": "prosecco",
+        "name": "Prosecco",
+        "type": "alcoholic"
+    },
+    {
+        "id": "campari",
+        "name": "Campari",
+        "type": "alcoholic"
+    },
+    {
+        "id": "vermouth",
+        "name": "Vermouth",
+        "type": "alcoholic"
+    },
+    {
+        "id": "soda",
+        "name": "Soda",
+        "type": "non-alcoholic"
+    },
+    {
+        "id": "violet_syrup",
+        "name": "Violet Syrup",
+        "type": "syrup"
+    },
+    {
+        "id": "gin_nonalc",
+        "name": "Gin (non-alcoholic)",
+        "type": "non-alcoholic"
+    }
+]

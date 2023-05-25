@@ -1,0 +1,14 @@
+{
+    "id": "campari_soda",
+    "name": "Campari Soda",
+    "ingredients": [
+        {
+            "ingredient": "campari",
+            "amount": 50
+        },
+        {
+            "ingredient": "soda",
+            "amount": 100
+        }
+    ]
+}
