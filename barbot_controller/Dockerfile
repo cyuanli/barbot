@@ -9,8 +9,6 @@ RUN pip3 install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install --only main
 
-COPY data /data
-
 ENV FLASK_APP=/app/api.py
 
 CMD ["flask", "run", "--host=0.0.0.0"]
