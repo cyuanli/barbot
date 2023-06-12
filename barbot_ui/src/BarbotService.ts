@@ -1,8 +1,6 @@
-const API_URL = 'http://localhost:5000';
-
 class BarbotService {
     static async actuatePumps(durations: number[]): Promise<void> {
-        const response = await fetch(`${API_URL}/actuate`, {
+        const response = await fetch(`api/actuate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
