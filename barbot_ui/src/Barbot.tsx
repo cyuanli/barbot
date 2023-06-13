@@ -18,6 +18,7 @@ interface Config {
 const Barbot = () => {
     const [recipeOptions, setRecipeOptions] = useState<Recipe[]>([]);
     const [config, setConfig] = useState<Config>({} as Config);
+    const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
 
     useEffect(() => {
         setConfig(importedConfig);
@@ -34,10 +35,20 @@ const Barbot = () => {
         setRecipeOptions(filteredRecipes);
     };
 
-    const handleMakeDrink = (recipe: Recipe) => {
+    const handleSelectDrink = (recipe: Recipe) => {
+        if (recipe === selectedRecipe) {
+            setSelectedRecipe(null);
+        } else {
+            setSelectedRecipe(recipe);
+        }
+    };
+
+    const handleMakeDrink = () => {
+        if (!selectedRecipe) return;
+
         const durations = ["0", "1", "2", "3", "4", "5", "6"].map(key => {
             const ingredient = config.ingredients[key];
-            const recipeIngredient = recipe.ingredients.find(
+            const recipeIngredient = selectedRecipe.ingredients.find(
                 recipeIngredient => recipeIngredient.ingredient === ingredient
             );
             const duration = recipeIngredient ? (recipeIngredient.amount / config.flow_rates[key]) * 1000 + config.time_offset : 0;
@@ -46,16 +57,23 @@ const Barbot = () => {
         BarbotService.actuatePumps(durations)
             .then(() => console.log('Drink is being prepared'))
             .catch(console.error);
+        setSelectedRecipe(null);
     };
 
     return (
-        <div className="centered">
+        <div className="barbot-container">
             <ul className="drink-list">
                 {recipeOptions.map(recipe => (
                     <li key={recipe.id}>
-                        <button onClick={() => handleMakeDrink(recipe)}>{recipe.name}</button>
+                        <button
+                            className={selectedRecipe === recipe ? 'selected' : ''}
+                            onClick={() => handleSelectDrink(recipe)}
+                        >{recipe.name}</button>
                     </li>
                 ))}
+                <li>
+                    <button className="mix-drink" onClick={handleMakeDrink}>Mix Drink</button>
+                </li>
             </ul>
         </div>
     );
