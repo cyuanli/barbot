@@ -36,7 +36,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const client = new WebPubSubServiceClient(connectionString, 'hub');
 
     try {
-        await client.sendToAll(JSON.stringify({ "durations": durations }));
+        await client.sendToAll({ "durations": durations });
         context.res = {
             status: 200,
             body: { "message": "Message sent" }

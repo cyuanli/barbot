@@ -2,7 +2,6 @@
 
 :root {
   --main-purple-color: #A8A1FF;
-  --light-grey-color: #e7e7e7;
 }
 
 body {
@@ -16,9 +15,6 @@ body {
 .App {
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.barbot-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -44,7 +40,7 @@ button {
   width: 100%;
   background-color: white;
   color: black;
-  border: 2px solid var(--light-grey-color);
+  border: 2px solid gainsboro;
   border-radius: 8px;
   padding: 20px;
   cursor: pointer;
@@ -57,11 +53,40 @@ button {
 }
 
 .selected {
-  background-color: var(--light-grey-color);
+  background-color: gainsboro;
 }
 
-.mix-drink {
+.confirm-button {
   background-color: var(--main-purple-color);
   border: 2px solid transparent;
   color: white;
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 10px 10px;
+  color: dimgray;
+}
+
+.config-row {
+  display: grid;
+  grid-template-columns: 15px auto 120px;
+  gap: 10px;
+  align-items: center;
+}
+
+.config-row input {
+  border: 1px solid gainsboro;
+  border-radius: 4px;
+}
+
+.button-disabled {
+  color: gainsboro;
+
+  &:hover {
+    box-shadow: none;
+    cursor: auto;
+  }
 }

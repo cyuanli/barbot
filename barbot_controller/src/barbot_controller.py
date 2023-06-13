@@ -1,10 +1,10 @@
 import logging
-import threading
+import os
 import time
 
 from serial import Serial, SerialException
 
-SERIAL_PORT = "/dev/ttyUSB0"
+
 TIME_UNIT = 500  # time resolution of the arduino in ms
 
 
@@ -23,23 +23,27 @@ class BarbotController:
         loading ingredients, configuration, and recipes.
         """
         logging.debug("Initalizing barbot ...")
-        self.lock = threading.Lock()
+        try:
+            serial_port = os.environ["SERIAL_PORT"]
+        except KeyError as exc:
+            logging.error("No serial port.")
+            raise EnvironmentError("No serial port.") from exc
         for i in range(5 * 60):
             try:
-                self.serial = Serial(SERIAL_PORT)
+                self.serial = Serial(serial_port)
                 time.sleep(2)  # Wait a bit for serial connection
             except SerialException:
                 if i % 10 == 0:
                     logging.warning(
-                        "Barbot is not connected to %s, try again ...", SERIAL_PORT
+                        "Barbot is not connected to %s, try again ...", serial_port
                     )
                 time.sleep(1)
                 continue
             break
         if not hasattr(self, "serial"):
-            logging.error("Failed to initialize Barbot on %s.", SERIAL_PORT)
+            logging.error("Failed to initialize Barbot on %s.", serial_port)
             raise BarbotInitializationError(
-                f"Failed to initialize Barbot on {SERIAL_PORT}."
+                f"Failed to initialize Barbot on {serial_port}."
             )
         self.pump_end_time = time.time()
         logging.debug("Barbot is ready.")
