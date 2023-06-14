@@ -1,20 +1,8 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
-import { WebPubSubServiceClient } from "@azure/web-pubsub";
+import { getWebPubSubClient } from "../utils";
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    context.log('HTTP trigger: negotiate');
-
-    const connectionString = process.env.PUBSUB_CONNECTION_STRING;
-    if (!connectionString) {
-        context.log.error('No connection string.');
-        context.res = {
-            status: 500,
-            body: { "message": "No connection string" }
-        };
-        return;
-    }
-
-    const client = new WebPubSubServiceClient(connectionString, 'status');
+    const client = await getWebPubSubClient(context, 'status');
     try {
         const userId = req.headers['x-ms-client-principal-name'] || '';
         const tokenResponse = await client.getClientAccessToken({ userId: userId });

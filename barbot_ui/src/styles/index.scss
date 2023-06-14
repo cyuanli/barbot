@@ -62,26 +62,6 @@ button {
   color: white;
 }
 
-.config-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  padding: 10px 10px;
-  color: dimgray;
-}
-
-.config-row {
-  display: grid;
-  grid-template-columns: 15px auto 120px;
-  gap: 10px;
-  align-items: center;
-}
-
-.config-row input {
-  border: 1px solid gainsboro;
-  border-radius: 4px;
-}
-
 .button-disabled {
   color: gainsboro;
 
@@ -93,4 +73,27 @@ button {
 
 .ftw-spinner {
   height: 18px;
+}
+
+.test-window {
+  border: 2px solid gainsboro;
+  border-radius: 12px;
+  padding: 20px 40px;
+  background-color: white;
+}
+
+.test-input input {
+  border: 1px solid gainsboro;
+  border-radius: 4px;
+  margin: 0 20px;
+  width: 40px;
+  font-size: 1.2em;
+  text-align: right;
+}
+
+.test-input button {
+  width: 120px;
+  margin: 5px;
+  font-size: 1em;
+  padding: 10px;
 }

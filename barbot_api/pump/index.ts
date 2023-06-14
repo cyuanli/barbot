@@ -1,9 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
-import { WebPubSubServiceClient } from "@azure/web-pubsub";
+import { getWebPubSubClient } from "../utils";
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    context.log('HTTP trigger: job');
-
     const reqBody = req.body;
 
     if (!reqBody) {
@@ -23,17 +21,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         return;
     }
 
-    const connectionString = process.env.PUBSUB_CONNECTION_STRING;
-    if (!connectionString) {
-        context.log.error('No connection string.');
-        context.res = {
-            status: 500,
-            body: { "message": "No connection string" }
-        };
-        return;
-    }
-
-    const client = new WebPubSubServiceClient(connectionString, 'job');
+    const client = await getWebPubSubClient(context, 'job');
 
     try {
         await client.sendToAll({ "durations": durations });

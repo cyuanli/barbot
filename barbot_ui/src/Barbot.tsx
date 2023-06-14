@@ -2,10 +2,11 @@ import useBarbotModel from './BarbotModel';
 
 const Barbot = () => {
     const { recipeOptions, selectedRecipe, isOnline, isBusy, handleSelectDrink, handleMakeDrink } = useBarbotModel();
+    const sortedRecipeOptions = [...recipeOptions].sort((a, b) => a.name.localeCompare(b.name));
 
     return (
         <ul className="drink-list">
-            {recipeOptions.map(recipe => (
+            {sortedRecipeOptions.map(recipe => (
                 <li key={recipe.id}>
                     <button
                         className={selectedRecipe === recipe ? 'selected' : ''}

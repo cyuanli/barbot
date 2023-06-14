@@ -14,10 +14,11 @@ logging.basicConfig(level=logging.INFO)
 
 STATUS_SERVICE = None
 JOB_SERVICE = None
+TOKEN_REFRESH_INTERVAL_SECONDS = 1800
+TOKEN = None
 
 
 async def send_status_message(barbot: BarbotController):
-    global STATUS_SERVICE
     try:
         STATUS_SERVICE.send_to_all(
             message={
@@ -35,29 +36,45 @@ async def send_status(barbot: BarbotController, interval: int):
         await asyncio.sleep(interval)
 
 
+async def refresh_token_once():
+    global TOKEN
+    try:
+        TOKEN = JOB_SERVICE.get_client_access_token()
+    except Exception as e:
+        logging.error(f"Failed to refresh token: {e}")
+
+
+async def refresh_token():
+    while True:
+        await refresh_token_once()
+        await asyncio.sleep(TOKEN_REFRESH_INTERVAL_SECONDS)
+
+
 async def receive_job(barbot: BarbotController):
-    global JOB_SERVICE, STATUS_SERVICE
-    token = JOB_SERVICE.get_client_access_token()
-    async with connect(token["url"]) as websocket:
-        logging.debug("WebSocket connected.")
-        while True:
-            try:
-                message = json.loads(await websocket.recv())
-                barbot.actuate_pumps(message["durations"])
-                await send_status_message(barbot)
-            except JSONDecodeError:
-                logging.error("Received invalid JSON.")
-            except BarbotActuationError as exception:
-                logging.error(f"Failed to actuate pumps: {exception}")
-            except ConnectionClosed:
-                logging.error("WebSocket connection closed.")
-                break
+    while True:
+        try:
+            async with connect(TOKEN["url"]) as websocket:
+                logging.debug("WebSocket connected.")
+                while True:
+                    message = json.loads(await websocket.recv())
+                    barbot.actuate_pumps(message["durations"])
+                    await send_status_message(barbot)
+        except JSONDecodeError:
+            logging.error("Received invalid JSON.")
+        except BarbotActuationError as exception:
+            logging.error(f"Failed to actuate pumps: {exception}")
+        except ConnectionClosed:
+            logging.error(
+                "WebSocket connection closed due to token expiration, reconnecting."
+            )
+            continue
 
 
 async def start_tasks(barbot: BarbotController):
     send_status_task = asyncio.create_task(send_status(barbot, 2))
     receive_job_task = asyncio.create_task(receive_job(barbot))
-    await asyncio.gather(send_status_task, receive_job_task)
+    refresh_token_task = asyncio.create_task(refresh_token())
+    await asyncio.gather(send_status_task, receive_job_task, refresh_token_task)
 
 
 def main():
@@ -66,7 +83,7 @@ def main():
     except KeyError:
         logging.error("No connection string.")
         raise EnvironmentError("No connection string.")
-    global JOB_SERVICE, STATUS_SERVICE
+    global STATUS_SERVICE, JOB_SERVICE
     STATUS_SERVICE = WebPubSubServiceClient.from_connection_string(
         connection_string, "status"
     )
@@ -74,10 +91,8 @@ def main():
         connection_string, "job"
     )
     barbot = BarbotController()
-    try:
-        asyncio.run(start_tasks(barbot))
-    except KeyboardInterrupt:
-        pass
+    asyncio.run(refresh_token_once())
+    asyncio.run(start_tasks(barbot))
 
 
 if __name__ == "__main__":
