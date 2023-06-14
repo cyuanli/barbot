@@ -16,5 +16,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/actuate/index.js"
+  "scriptFile": "../dist/job/index.js"
 }

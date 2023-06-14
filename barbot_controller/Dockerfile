@@ -11,4 +11,4 @@ RUN poetry install --only main
 
 ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "/app/subscriber.py"]
+CMD ["python", "/app/pubsub_client.py"]

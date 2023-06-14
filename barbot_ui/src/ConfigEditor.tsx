@@ -55,7 +55,7 @@ const ConfigEditor = () => {
                     <label>Time offset (ms)</label>
                     <input type="number" step="100" name="time_offset" value={editedConfig.time_offset} onChange={handleTimeOffsetChange} />
                 </div>
-                <button type="submit" className={config === editedConfig ? 'button-disabled' : 'confirm-button'}>Save</button>
+                <button type="submit" className={config === editedConfig ? 'button-disabled' : 'button-confirm'}>Save</button>
             </div>
 
         </form>

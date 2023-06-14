@@ -85,6 +85,10 @@ class BarbotController:
             now + sum(durations) / 1000
         )  # durations are in milliseconds
 
+    def remaining_job_time(self):
+        dt = self.pump_end_time - time.time()
+        return max(dt, 0)
+
     def _create_pump_job_string(self, durations):
         job_str = ""
         char_offset = ord("0")

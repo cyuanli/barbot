@@ -2,14 +2,14 @@ import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { WebPubSubServiceClient } from "@azure/web-pubsub";
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-    context.log('HTTP trigger function processed a request.');
+    context.log('HTTP trigger: job');
 
     const reqBody = req.body;
 
     if (!reqBody) {
         context.res = {
             status: 400,
-            body: "Invalid JSON"
+            body: { "message": "Invalid JSON" }
         };
         return;
     }
@@ -33,7 +33,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         return;
     }
 
-    const client = new WebPubSubServiceClient(connectionString, 'hub');
+    const client = new WebPubSubServiceClient(connectionString, 'job');
 
     try {
         await client.sendToAll({ "durations": durations });

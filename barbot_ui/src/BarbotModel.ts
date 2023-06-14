@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BarbotService from './BarbotService';
 import recipes from './recipes';
 import defaultConfig from './data/config.json';
@@ -15,10 +15,66 @@ interface Config {
     time_offset: number;
 }
 
+interface StatusMessage {
+    timestamp: number;
+    remainingJobTime: number;
+}
+
 const useBarbotModel = () => {
     const [recipeOptions, setRecipeOptions] = useState<Recipe[]>(JSON.parse(localStorage.getItem('recipeOptions') || '[]'));
     const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(JSON.parse(localStorage.getItem('selectedRecipe') || 'null'));
     const [config, setConfig] = useState<Config>(JSON.parse(localStorage.getItem('config') || JSON.stringify(defaultConfig)));
+    const [isOnline, setIsOnline] = useState<boolean>(false);
+    const [isBusy, setIsBusy] = useState<boolean>(false);
+    const [statusMessage, setStatusMessage] = useState<StatusMessage | null>(null);
+    const onlineTimerIdRef = useRef<NodeJS.Timeout | null>(null);
+    const busyTimerIdRef = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        BarbotService.getWebPubSubURL()
+            .then(url => {
+                const socket = new WebSocket(url);
+                socket.onmessage = (event) => {
+                    const statusMessage: StatusMessage = JSON.parse(event.data);
+                    setStatusMessage(statusMessage);
+                };
+            })
+            .catch(console.error);
+    }, []);
+
+    useEffect(() => {
+        if (statusMessage) {
+            const messageTime = new Date(statusMessage.timestamp).getTime();
+            const currentTime = Date.now();
+            console.log("Received status message: " + JSON.stringify(statusMessage));
+            const timeDiff = currentTime - messageTime;
+            setIsOnline(timeDiff < 4000);
+            if (onlineTimerIdRef.current) {
+                clearTimeout(onlineTimerIdRef.current);
+            }
+            onlineTimerIdRef.current = setTimeout(() => setIsOnline(false), 4000 - timeDiff);
+
+            const remainingJobTime = statusMessage.remainingJobTime * 1000;
+            if (remainingJobTime > 0) {
+                setIsBusy(true);
+                if (busyTimerIdRef.current) {
+                    clearTimeout(busyTimerIdRef.current);
+                }
+                busyTimerIdRef.current = setTimeout(() => setIsBusy(false), remainingJobTime);
+            } else {
+                setIsBusy(false);
+            }
+        }
+
+        return () => {
+            if (onlineTimerIdRef.current) {
+                clearTimeout(onlineTimerIdRef.current);
+            }
+            if (busyTimerIdRef.current) {
+                clearTimeout(busyTimerIdRef.current);
+            }
+        }
+    }, [statusMessage]);
 
     useEffect(() => {
         localStorage.setItem('recipeOptions', JSON.stringify(recipeOptions));
@@ -57,7 +113,7 @@ const useBarbotModel = () => {
             return duration;
         });
         BarbotService.actuatePumps(durations)
-            .then(() => console.log('Drink is being prepared'))
+            .then(() => console.log('Successfully sent job: ' + JSON.stringify(durations)))
             .catch(console.error);
         setSelectedRecipe(null);
     };
@@ -66,7 +122,7 @@ const useBarbotModel = () => {
         setConfig(newConfig);
     }
 
-    return { recipeOptions, selectedRecipe, config, handleSelectDrink, handleMakeDrink, handleNewConfig };
+    return { recipeOptions, selectedRecipe, config, isOnline, isBusy, handleSelectDrink, handleMakeDrink, handleNewConfig };
 };
 
 export default useBarbotModel;

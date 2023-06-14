@@ -1,7 +1,7 @@
 import useBarbotModel from './BarbotModel';
 
 const Barbot = () => {
-    const { recipeOptions, selectedRecipe, handleSelectDrink, handleMakeDrink } = useBarbotModel();
+    const { recipeOptions, selectedRecipe, isOnline, isBusy, handleSelectDrink, handleMakeDrink } = useBarbotModel();
 
     return (
         <ul className="drink-list">
@@ -14,7 +14,16 @@ const Barbot = () => {
                 </li>
             ))}
             <li>
-                <button className="confirm-button" onClick={handleMakeDrink}>Mix Drink</button>
+                {!isOnline ?
+                    <button className="button-disabled">
+                        Barbot is offline
+                    </button> :
+                    isBusy ?
+                        <button className="button-disabled">
+                            Mixing Drink ... <img src="/ftw_spinner.gif" alt="Loading..." className="ftw-spinner" />
+                        </button> :
+                        <button className="button-confirm" onClick={handleMakeDrink}>Mix Drink</button>
+                }
             </li>
         </ul>
     );
