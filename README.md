@@ -1,8 +1,10 @@
 # Barbot
 
+_README was written by AI. I might add to it in the future._
+
 An automated cocktail mixer system that dispenses and mixes drinks based on recipes.
 
-[![Barbot Demo](https://img.youtube.com/vi/TEYJAa9Pyq8/0.jpg)](https://www.youtube.com/watch?v=TEYJAa9Pyq8)
+![Barbot demo](https://github.com/user-attachments/assets/fd60e7ac-31f8-437a-a4f4-ba095e527d3f)
 
 ## Architecture
 
